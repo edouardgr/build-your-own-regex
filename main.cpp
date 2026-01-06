@@ -16,7 +16,7 @@ int main()
     // Tokens -> AST
     AST::Parser parser{ tokens };
     const std::unique_ptr<AST::Node> tree = parser.Parse();
-    std::cout << tree->Print() << std::endl;
+    std::cout << tree->Print() << std::endl << std::endl;
 
     // AST -> NFA
     FiniteAutomata::NFA nfa { tree.get() };
