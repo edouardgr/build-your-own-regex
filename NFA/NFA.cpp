@@ -1,5 +1,7 @@
 #include "NFA.h"
 
+#include <stack>
+
 namespace FiniteAutomata
 {
     constexpr char epsilonCharacter = '.';
@@ -152,6 +154,58 @@ namespace FiniteAutomata
     {
         auto [startStateIndex, _] = DetermineProcess(rootNode, States, true);
         InitialStateIndex = startStateIndex;
+    }
+
+    struct StackData
+    {
+        size_t StateIndex;
+        size_t StringIndex;
+    };
+
+    bool NFA::Validate(const std::string& input)
+    {
+        std::stack<StackData> stack;
+        stack.push({ InitialStateIndex, 0 });
+
+        size_t currentStateIndex = InitialStateIndex;
+        while (!stack.empty())
+        {
+            auto [stateIndex, stringIndex] = stack.top();
+            currentStateIndex = stateIndex;
+            stack.pop();
+
+            auto transitionTable = States[currentStateIndex].GetTransitionTable();
+            for (const auto& [character, nextStateIndexes] : transitionTable)
+            {
+                if (character == epsilonCharacter)
+                {
+                    for (const size_t nextStateIndex : nextStateIndexes)
+                    {
+                        if (States[nextStateIndex].IsFinalState())
+                        {
+                            return true;
+                        }
+
+                        stack.push({ nextStateIndex, stringIndex });
+                    }
+                }
+
+                if (character == input[stringIndex])
+                {
+                    for (const size_t nextStateIndex : nextStateIndexes)
+                    {
+                        if (States[nextStateIndex].IsFinalState())
+                        {
+                            return true;
+                        }
+
+                        stack.push({ nextStateIndex, stringIndex + 1 });
+                    }
+                }
+            }
+        }
+
+        return States[currentStateIndex].IsFinalState();
     }
 
     void NFA::Print()

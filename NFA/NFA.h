@@ -11,6 +11,7 @@ namespace FiniteAutomata
         explicit State(const bool isFinal) : IsFinal(isFinal) { TransitionTable = std::map<char, std::vector<size_t>> { }; }
         bool IsFinalState() const { return IsFinal; }
         void AddTransition(char character, size_t nextStateIndex);
+        std::map<char, std::vector<size_t>> GetTransitionTable() { return TransitionTable; };
         void PrintTransitions();
 
     private:
@@ -22,6 +23,7 @@ namespace FiniteAutomata
     {
     public:
         explicit NFA(AST::Node* rootNode);
+        bool Validate(const std::string& input);
         void Print();
 
     private:

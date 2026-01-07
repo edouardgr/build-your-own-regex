@@ -21,6 +21,8 @@ int main()
     // AST -> NFA
     FiniteAutomata::NFA nfa { tree.get() };
     nfa.Print();
+
+    std::cout << nfa.Validate("c");
 }
 
 //          Alternation(|)
