@@ -27,7 +27,7 @@ namespace FiniteAutomata
         const size_t endIndex = states.size();
         states.emplace_back(hasFinal);
         
-        states[startIndex].AddTransition(node->GetCharacter(), endIndex);
+        states[startIndex].AddTransition(node->GetLiteral(), endIndex);
 
         return Result { startIndex, endIndex };
     }
@@ -135,8 +135,10 @@ namespace FiniteAutomata
         {
             TransitionTable[character].push_back(nextStateIndex);
         }
-
-        TransitionTable.insert({character, std::vector<size_t> { nextStateIndex }});
+        else
+        {
+            TransitionTable.insert({character, std::vector { nextStateIndex }});
+        }
     }
 
     void State::PrintTransitions()
@@ -162,7 +164,7 @@ namespace FiniteAutomata
         size_t StringIndex;
     };
 
-    bool NFA::Validate(const std::string& input)
+    bool NFA::Validate(const std::string& input) const
     {
         std::stack<StackData> stack;
         stack.push({ InitialStateIndex, 0 });
@@ -190,7 +192,7 @@ namespace FiniteAutomata
                     }
                 }
 
-                if (character == input[stringIndex])
+                if (stringIndex < input.length() && character == input[stringIndex])
                 {
                     for (const size_t nextStateIndex : nextStateIndexes)
                     {

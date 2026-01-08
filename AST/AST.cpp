@@ -8,6 +8,24 @@ namespace AST
 		return "(" + LeftNode->Print() + "|" + RightNode->Print() + ")";
 	}
 
+	ConcatenationNode::ConcatenationNode(std::vector<std::unique_ptr<Node>> children): Node(Concatenation)
+	{
+		Children = std::move(children);
+	}
+
+	std::vector<Node*> ConcatenationNode::GetChildren() const
+	{
+		std::vector<Node*> children;
+		children.reserve(Children.size());
+
+		for (auto& child : Children)
+		{
+			children.emplace_back(child.get());
+		}
+
+		return children;
+	}
+
 	std::string ConcatenationNode::Print()
 	{
 		std::string result = "(";
@@ -26,19 +44,19 @@ namespace AST
 
 	std::string LiteralNode::Print()
 	{
-		return std::string { Character };
+		return std::string { _literal };
 	}
 
-	Tokenizer::Token Parser::Peek() const
+	std::string Parser::Peek() const
 	{
 		if (pos >= Tokens.size())
 		{
-			throw std::out_of_range("Peeking token out of range");
+			throw std::out_of_range("Consuming token out of range");
 		}
 		return Tokens[pos];
 	}
 
-	Tokenizer::Token Parser::Consume()
+	std::string Parser::Consume()
 	{
 		if (pos >= Tokens.size())
 		{
@@ -54,9 +72,9 @@ namespace AST
 
 	std::unique_ptr<Node> Parser::ParsePrimary()
 	{
-		const Tokenizer::Token token = Peek();
+		const std::string token = Peek();
 
-		if (token.GetCharacter() == OpenParenthesesCharacter)
+		if (token[0] == OpenParenthesesCharacter)
 		{
 			Consume(); // eat (
 			auto expression = ParseAlternation();
@@ -65,14 +83,14 @@ namespace AST
 		}
 
 		Consume(); // consume literal
-		return std::make_unique<LiteralNode>(token.GetCharacter());
+		return std::make_unique<LiteralNode>(token[0]);
 	}
 
 	std::unique_ptr<Node> Parser::ParseStar()
 	{
 		auto left = ParsePrimary();
 
-		if (HasRemaining() && Peek().GetCharacter() == StarCharacter)
+		if (HasRemaining() && Peek()[0] == StarCharacter)
 		{
 			Consume(); // eat *
 			return std::make_unique<StarNode>(std::move(left));
@@ -86,7 +104,7 @@ namespace AST
 		std::vector<std::unique_ptr<Node>> nodes{ };
 
 		// Keep parsing star until we hit | or ) or end
-		while (HasRemaining() && Peek().GetCharacter() != AlternationCharacter && Peek().GetCharacter() != CloseParenthesesCharacter)
+		while (HasRemaining() && Peek()[0] != AlternationCharacter && Peek()[0] != CloseParenthesesCharacter)
 		{
 			nodes.push_back(ParseStar());
 		}
@@ -103,7 +121,7 @@ namespace AST
 	{
 		auto left = ParseConcatenation();
 
-		if (HasRemaining() && Peek().GetCharacter() == AlternationCharacter)
+		if (HasRemaining() && Peek()[0] == AlternationCharacter)
 		{
 			Consume(); // eat |
 			auto right = ParseAlternation();

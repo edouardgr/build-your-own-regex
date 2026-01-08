@@ -6,7 +6,6 @@ set(CMAKE_CXX_STANDARD 20)
 add_executable(RegexEngine main.cpp
         Tokenizer/Tokenize.cpp
         Tokenizer/Tokenize.h
-        Tokenizer/Token.h
         AST/AST.cpp
         AST/AST.h
         NFA/NFA.cpp

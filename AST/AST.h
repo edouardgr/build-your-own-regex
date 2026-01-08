@@ -1,6 +1,4 @@
 #pragma once
-#include "../Tokenizer/Token.h"
-#include "../Tokenizer/Tokenize.h"
 #include <memory>
 #include <utility>
 #include <vector>
@@ -25,7 +23,7 @@ namespace AST
         explicit Node(const NodeType type) : Type{ type } {}
         virtual ~Node() = default;
 
-        NodeType GetType() const { return Type; }
+        [[nodiscard]] NodeType GetType() const { return Type; }
         virtual std::string Print() { return "Error"; };
 
     private:
@@ -39,8 +37,8 @@ namespace AST
         {
         }
 
-        Node* GetLeftNode() const { return LeftNode.get(); };
-        Node* GetRightNode() const { return RightNode.get(); };
+        [[nodiscard]] Node* GetLeftNode() const { return LeftNode.get(); };
+        [[nodiscard]] Node* GetRightNode() const { return RightNode.get(); };
 
         std::string Print() override;
 
@@ -51,28 +49,8 @@ namespace AST
 
     class ConcatenationNode : public Node {
     public:
-        explicit ConcatenationNode(std::vector<std::unique_ptr<Node>> children) : Node(Concatenation)
-        {
-            while (!children.empty())
-            {
-                Children.push_back(std::move(children[0]));
-                children.erase(children.begin());
-            }
-        }
-
-        std::vector<Node*> GetChildren() const
-        {
-            std::vector<Node*> children;
-            children.reserve(Children.size());
-
-            for (auto& child : Children)
-            {
-                children.emplace_back(child.get());
-            }
-
-            return children;
-        };
-
+        explicit ConcatenationNode(std::vector<std::unique_ptr<Node>> children);
+        [[nodiscard]] std::vector<Node*> GetChildren() const;;
         std::string Print() override;
 
     private:
@@ -84,7 +62,7 @@ namespace AST
         explicit StarNode(std::unique_ptr<Node> leftNode) : Node(Star), LeftNode {std::move(leftNode)} {}
         std::string Print() override;
 
-        Node* GetLeftNode() const { return LeftNode.get(); };
+        [[nodiscard]] Node* GetLeftNode() const { return LeftNode.get(); };
 
     private:
         std::unique_ptr<Node> LeftNode;
@@ -92,26 +70,26 @@ namespace AST
 
     class LiteralNode : public Node {
     public:
-        explicit LiteralNode(const char character) : Node(Literal), Character { character } {}
-        char GetCharacter() const { return Character; }
+        explicit LiteralNode(const char character) : Node(Literal), _literal { character } {}
+        [[nodiscard]] char GetLiteral() const { return _literal; }
         std::string Print() override;
 
     private:
-        char Character;
+        char _literal;
     };
 
     class Parser {
     public:
-        explicit Parser(const std::vector<Tokenizer::Token>& tokens) : Tokens{ tokens } {};
+        explicit Parser(const std::vector<std::string>& tokens) : Tokens{ tokens } {};
         std::unique_ptr<Node> Parse();
 
     private:
-        std::vector<Tokenizer::Token> Tokens;
+        std::vector<std::string> Tokens;
         int pos = 0;
 
-        bool HasRemaining() const { return pos < Tokens.size(); };
-        Tokenizer::Token Peek() const;
-        Tokenizer::Token Consume();
+        [[nodiscard]] bool HasRemaining() const { return pos < Tokens.size(); };
+        [[nodiscard]] std::string Peek() const;
+        std::string Consume();
         std::unique_ptr<Node> ParsePrimary();
         std::unique_ptr<Node> ParseStar();
         std::unique_ptr<Node> ParseConcatenation();

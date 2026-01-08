@@ -1,5 +1,4 @@
 #include "AST/AST.h"
-#include "Tokenizer/Token.h"
 #include "Tokenizer/Tokenize.h"
 #include <iostream>
 #include <memory>
@@ -11,16 +10,16 @@ int main()
 {
     // Tokenize input
     const std::string inputRegex = "(ab*)*|c*";
-    const std::vector<Tokenizer::Token> tokens = Tokenizer::Tokenize(inputRegex);
+    const std::vector<std::string> tokens = Tokenizer::Tokenize(inputRegex);
 
     // Tokens -> AST
     AST::Parser parser{ tokens };
     const std::unique_ptr<AST::Node> tree = parser.Parse();
-    std::cout << tree->Print() << std::endl << std::endl;
+    std::cout << tree->Print() << std::endl;
 
     // AST -> NFA
     FiniteAutomata::NFA nfa { tree.get() };
-    nfa.Print();
+    // nfa.Print();
 
     std::cout << nfa.Validate("c");
 }

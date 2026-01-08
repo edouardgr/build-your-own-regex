@@ -2,11 +2,12 @@
 
 namespace Tokenizer
 {
-    std::vector<Token> Tokenize(const std::string& input)
+    std::vector<std::string> Tokenize(const std::string& input)
     {
-        std::vector<Token> tokens{ };
-        for (int index = 0; index < input.length(); index++) {
-            tokens.emplace_back(input[index]);
+        std::vector<std::string> tokens{ };
+        for (const char c : input)
+        {
+            tokens.emplace_back(std::string { c });
         }
         return tokens;
     }
