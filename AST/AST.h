@@ -5,17 +5,16 @@
 
 namespace AST
 {
-    constexpr char AlternationCharacter = '|';
-    constexpr char StarCharacter = '*';
-    constexpr char OpenParenthesesCharacter = '(';
-    constexpr char CloseParenthesesCharacter = ')';
-
     enum NodeType
     {
-        Literal, // 'a' 'b'
+        Literal, // 'a' 'b' '[a-z]'
         Star, // *
         Concatenation, // ab
         Alternation // |
+        // a? - Zero or one
+    // a+ - One or more
+    // . - wildcard
+    // [] - character range
     };
 
     class Node {
@@ -76,23 +75,5 @@ namespace AST
 
     private:
         char _literal;
-    };
-
-    class Parser {
-    public:
-        explicit Parser(const std::vector<std::string>& tokens) : Tokens{ tokens } {};
-        std::unique_ptr<Node> Parse();
-
-    private:
-        std::vector<std::string> Tokens;
-        int pos = 0;
-
-        [[nodiscard]] bool HasRemaining() const { return pos < Tokens.size(); };
-        [[nodiscard]] std::string Peek() const;
-        std::string Consume();
-        std::unique_ptr<Node> ParsePrimary();
-        std::unique_ptr<Node> ParseStar();
-        std::unique_ptr<Node> ParseConcatenation();
-        std::unique_ptr<Node> ParseAlternation();
     };
 }
