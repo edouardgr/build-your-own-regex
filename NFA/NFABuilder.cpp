@@ -84,18 +84,18 @@ namespace NFABuilder
         //        () N(b) ()
 
         // Start index
-        const size_t startIndex = states.size(); // 0
+        const size_t startIndex = states.size();
         states.emplace_back(false);
 
         // End index
-        const size_t endIndex = states.size(); // 1
+        const size_t endIndex = states.size();
         states.emplace_back(hasFinal);
 
         auto [leftStartIndex, leftEndIndex] = DetermineProcess(node->GetLeftNode(), states, false); // 2, 3
         auto [rightStartIndex, rightEndIndex] = DetermineProcess(node->GetRightNode(), states, false); // 4, 5
 
-        states[startIndex].AddTransition(NFA::EpsilonCharacter, leftStartIndex); // 0 -> 2
-        states[startIndex].AddTransition(NFA::EpsilonCharacter, rightStartIndex); // 0 -> 3
+        states[startIndex].AddTransition(NFA::EpsilonCharacter, leftStartIndex);
+        states[startIndex].AddTransition(NFA::EpsilonCharacter, rightStartIndex);
 
         states[leftEndIndex].AddTransition(NFA::EpsilonCharacter, endIndex);
         states[rightEndIndex].AddTransition(NFA::EpsilonCharacter, endIndex);
