@@ -1,9 +1,4 @@
-//
-// Created by Edouard on 10/01/2026.
-//
-
 #include "State.h"
-
 #include <iostream>
 
 namespace NFA

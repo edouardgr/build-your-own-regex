@@ -1,12 +1,13 @@
 #include "NFA.h"
-
+#include "Constants.h"
+#include "NFABuilder.h"
 #include <stack>
 
 namespace FiniteAutomata
 {
     NFA::NFA(AST::Node* rootNode)
     {
-        auto [startStateIndex, _] = DetermineProcess(rootNode, States, true);
+        auto [startStateIndex, _] = NFABuilder::DetermineProcess(rootNode, States, true);
         InitialStateIndex = startStateIndex;
     }
 
@@ -31,7 +32,7 @@ namespace FiniteAutomata
             auto transitionTable = States[currentStateIndex].GetTransitionTable();
             for (const auto& [character, nextStateIndexes] : transitionTable)
             {
-                if (character == epsilonCharacter)
+                if (character == ::NFA::EpsilonCharacter)
                 {
                     for (const size_t nextStateIndex : nextStateIndexes)
                     {
@@ -61,24 +62,6 @@ namespace FiniteAutomata
 
         return States[currentStateIndex].IsFinalState();
     }
-
-    void NFA::Print()
-    {
-        std::cout << "StartIndex: " << InitialStateIndex << std::endl << std::endl;
-        for (size_t index = 0; index < States.size(); index++)
-        {
-            if  (States[index].IsFinalState())
-            {
-                std::cout << "Index " << index << " is a Final State" << std::endl;
-            }
-            else
-            {
-                std::cout << "Index " << index << std::endl;
-                States[index].PrintTransitions();
-                std::cout << std::endl;
-            }
-        }
-    };
 }
 
 //          Alternation(|)

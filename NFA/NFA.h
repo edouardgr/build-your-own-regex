@@ -11,7 +11,6 @@ namespace FiniteAutomata
     public:
         explicit NFA(AST::Node* rootNode);
         [[nodiscard]] bool Validate(const std::string& input) const;
-        void Print();
 
     private:
         std::vector<::NFA::State> States;

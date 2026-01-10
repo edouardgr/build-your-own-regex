@@ -1,17 +1,10 @@
 #include "State.h"
 #include "Constants.h"
 #include "../AST/AST.h"
+#include "NFABuilder.h"
 
 namespace NFABuilder
 {
-    struct Result
-    {
-        size_t startStateIndex;
-        size_t endStateIndex;
-    };
-
-    Result DetermineProcess(AST::Node* node, std::vector<::NFA::State>& states, bool hasFinal = false);
-
     static Result ProcessLiteral(const AST::LiteralNode* node, std::vector<NFA::State>& states, const bool hasFinal)
     {
         //        a
