@@ -129,29 +129,6 @@ namespace FiniteAutomata
         }
     }
 
-    void State::AddTransition(const char character, const size_t nextStateIndex)
-    {
-        if (TransitionTable.contains(character))
-        {
-            TransitionTable[character].push_back(nextStateIndex);
-        }
-        else
-        {
-            TransitionTable.insert({character, std::vector { nextStateIndex }});
-        }
-    }
-
-    void State::PrintTransitions()
-    {
-        for (const auto& [character, targetIndexes] : TransitionTable)
-        {
-            for (const auto target_index : targetIndexes)
-            {
-                std::cout << "Transition: " << character << " -> " << target_index << std::endl;
-            }
-        }
-    }
-
     NFA::NFA(AST::Node* rootNode)
     {
         auto [startStateIndex, _] = DetermineProcess(rootNode, States, true);
