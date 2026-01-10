@@ -20,7 +20,7 @@ add_library(RegexEngineLib
         AST/AST.h
         NFA/NFA.cpp
         NFA/NFA.h
-        AST/Contants.h
+        AST/Constants.h
         AST/Parser.cpp
         AST/Parser.h)
 

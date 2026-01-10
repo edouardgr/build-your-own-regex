@@ -32,7 +32,7 @@ namespace FiniteAutomata
         return Result { startIndex, endIndex };
     }
 
-    static Result ProcessStar(AST::StarNode* node, std::vector<State>& states, const bool hasFinal)
+    static Result ProcessStar(AST::KleeneNode* node, std::vector<State>& states, const bool hasFinal)
     {
         //             -<<-
         //        ε   / ε  \   ε
@@ -118,8 +118,8 @@ namespace FiniteAutomata
         {
         case AST::Literal:
             return ProcessLiteral(dynamic_cast<AST::LiteralNode*>(node), states, hasFinal);
-        case AST::Star:
-            return ProcessStar(dynamic_cast<AST::StarNode*>(node), states, hasFinal);
+        case AST::ZeroOrMore:
+            return ProcessStar(dynamic_cast<AST::KleeneNode*>(node), states, hasFinal);
         case AST::Concatenation:
             return ProcessConcatenation(dynamic_cast<AST::ConcatenationNode*>(node), states, hasFinal);
         case AST::Alternation:

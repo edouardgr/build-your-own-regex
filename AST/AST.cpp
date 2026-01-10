@@ -36,13 +36,28 @@ namespace AST
 		return result;
 	}
 
-	std::string StarNode::Print()
+	std::string ZeroOrMoreNode::Print()
 	{
 		return LeftNode->Print() + "*";
+	}
+
+	std::string ZeroOrOneNode::Print()
+	{
+		return LeftNode->Print() + "?";
+	}
+
+	std::string OneOrMoreNode::Print()
+	{
+		return LeftNode->Print() + "+";
 	}
 
 	std::string LiteralNode::Print()
 	{
 		return std::string { _literal };
+	}
+
+	std::string WildcardNode::Print()
+	{
+		return ".";
 	}
 }

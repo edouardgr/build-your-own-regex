@@ -8,14 +8,23 @@ namespace AST
     enum NodeType
     {
         Literal, // 'a' 'b' '[a-z]'
-        Star, // *
         Concatenation, // ab
-        Alternation // |
-        // a? - Zero or one
-    // a+ - One or more
-    // . - wildcard
-    // [] - character range
+        Alternation, // |
+        ZeroOrMore, // *
+        ZeroOrOne, // ?
+        OneOrMore, // +
+        Wildcard, // .
     };
+
+    // Node (abstract)
+    // - AlternationNode
+    // - ConcatenationNode
+    // - LiteralNode
+    // - WildcardNode
+    // - KleeneNode (abstract)
+    //   - ZeroOrMoreNode
+    //   - ZeroOrOneNode
+    //   - OneOrMoreNode
 
     class Node {
     public:
@@ -23,7 +32,7 @@ namespace AST
         virtual ~Node() = default;
 
         [[nodiscard]] NodeType GetType() const { return Type; }
-        virtual std::string Print() { return "Error"; };
+        virtual std::string Print() { throw std::logic_error("Function not yet implemented"); };
 
     private:
         NodeType Type;
@@ -56,17 +65,6 @@ namespace AST
         std::vector<std::unique_ptr<Node>> Children;
     };
 
-    class StarNode : public Node {
-    public:
-        explicit StarNode(std::unique_ptr<Node> leftNode) : Node(Star), LeftNode {std::move(leftNode)} {}
-        std::string Print() override;
-
-        [[nodiscard]] Node* GetLeftNode() const { return LeftNode.get(); };
-
-    private:
-        std::unique_ptr<Node> LeftNode;
-    };
-
     class LiteralNode : public Node {
     public:
         explicit LiteralNode(const char character) : Node(Literal), _literal { character } {}
@@ -75,5 +73,44 @@ namespace AST
 
     private:
         char _literal;
+    };
+
+    class WildcardNode : public Node
+    {
+    public:
+        explicit WildcardNode() : Node(Wildcard) {}
+        std::string Print() override;
+    };
+
+    class KleeneNode : public Node {
+    public:
+        explicit KleeneNode(const NodeType type, std::unique_ptr<Node> leftNode) : Node(type), LeftNode {std::move(leftNode)} {}
+        std::string Print() override { throw std::logic_error("Function not yet implemented"); };
+
+        [[nodiscard]] Node* GetLeftNode() const { return LeftNode.get(); };
+
+    protected:
+        std::unique_ptr<Node> LeftNode;
+    };
+
+    class ZeroOrMoreNode : public KleeneNode
+    {
+    public:
+        explicit ZeroOrMoreNode(std::unique_ptr<Node> leftNode) : KleeneNode(ZeroOrMore, std::move(leftNode)) {}
+        std::string Print() override;
+    };
+
+    class ZeroOrOneNode : public KleeneNode
+    {
+    public:
+        explicit ZeroOrOneNode(std::unique_ptr<Node> leftNode) : KleeneNode(ZeroOrOne, std::move(leftNode)) {}
+        std::string Print() override;
+    };
+
+    class OneOrMoreNode : public KleeneNode
+    {
+    public:
+        explicit OneOrMoreNode(std::unique_ptr<Node> leftNode) : KleeneNode(OneOrMore, std::move(leftNode)) {}
+        std::string Print() override;
     };
 }

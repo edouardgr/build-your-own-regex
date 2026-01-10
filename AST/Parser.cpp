@@ -1,5 +1,5 @@
 #include "Parser.h"
-#include "Contants.h"
+#include "Constants.h"
 
 namespace AST
 {
@@ -38,18 +38,36 @@ namespace AST
             return expression;
         }
 
-        Consume(); // consume literal
+        if (token[0] == WildcardCharacter)
+        {
+            Consume(); // eat .
+            return std::make_unique<WildcardNode>();
+        }
+
+        Consume(); // eat literal
         return std::make_unique<LiteralNode>(token[0]);
     }
 
-    std::unique_ptr<Node> Parser::ParseStar()
+    std::unique_ptr<Node> Parser::ParseKleene()
     {
         auto left = ParsePrimary();
 
-        if (HasRemaining() && Peek()[0] == StarCharacter)
+        if (HasRemaining() && Peek()[0] == ZeroOrMoreCharacter)
         {
             Consume(); // eat *
-            return std::make_unique<StarNode>(std::move(left));
+            return std::make_unique<ZeroOrMoreNode>(std::move(left));
+        }
+
+        if (HasRemaining() && Peek()[0] == ZeroOrOneCharacter)
+        {
+            Consume(); // eat ?
+            return std::make_unique<ZeroOrOneNode>(std::move(left));
+        }
+
+        if (HasRemaining() && Peek()[0] == OneOrMoreCharacter)
+        {
+            Consume(); // eat +
+            return std::make_unique<OneOrMoreNode>(std::move(left));
         }
 
         return left;
@@ -62,7 +80,7 @@ namespace AST
         // Keep parsing star until we hit | or ) or end
         while (HasRemaining() && Peek()[0] != AlternationCharacter && Peek()[0] != CloseParenthesesCharacter)
         {
-            nodes.push_back(ParseStar());
+            nodes.push_back(ParseKleene());
         }
 
         if (nodes.size() == 1)

@@ -19,7 +19,7 @@ namespace AST
         [[nodiscard]] std::string Peek() const;
         std::string Consume();
         std::unique_ptr<Node> ParsePrimary();
-        std::unique_ptr<Node> ParseStar();
+        std::unique_ptr<Node> ParseKleene();
         std::unique_ptr<Node> ParseConcatenation();
         std::unique_ptr<Node> ParseAlternation();
     };
