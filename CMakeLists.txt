@@ -24,7 +24,9 @@ add_library(RegexEngineLib
         AST/Parser.cpp
         AST/Parser.h
         NFA/State.cpp
-        NFA/State.h)
+        NFA/State.h
+        NFA/NFABuilder.cpp
+        NFA/Constants.h)
 
 # Main application executable
 add_executable(RegexEngine main.cpp)
