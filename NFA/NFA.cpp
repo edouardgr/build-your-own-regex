@@ -32,7 +32,7 @@ namespace FiniteAutomata
         return Result { startIndex, endIndex };
     }
 
-    static Result ProcessStar(AST::KleeneNode* node, std::vector<State>& states, const bool hasFinal)
+    static Result ProcessStar(const AST::KleeneNode* node, std::vector<State>& states, const bool hasFinal)
     {
         //             -<<-
         //        ε   / ε  \   ε
@@ -59,7 +59,7 @@ namespace FiniteAutomata
         return Result { startIndex, endIndex };
     }
 
-    static Result ProcessConcatenation(AST::ConcatenationNode* node, std::vector<State>& states, const bool hasFinal)
+    static Result ProcessConcatenation(const AST::ConcatenationNode* node, std::vector<State>& states, const bool hasFinal)
     {
         // -->(q) N(a) () N(b) (f)-->
 
@@ -72,9 +72,9 @@ namespace FiniteAutomata
         states.emplace_back(hasFinal);
 
         size_t startIndex = originalStartIndex;
-        for (const auto child : node->GetChildren())
+        for (const auto& child : node->GetChildren())
         {
-            auto [childStartIndex, childEndIndex] = DetermineProcess(child, states, false);
+            auto [childStartIndex, childEndIndex] = DetermineProcess(child.get(), states, false);
 
             states[startIndex].AddTransition(epsilonCharacter, childStartIndex);
             startIndex = childEndIndex;
@@ -84,7 +84,7 @@ namespace FiniteAutomata
         return Result { originalStartIndex, endIndex };
     }
 
-    static Result ProcessAlternation(AST::AlternationNode* node, std::vector<State>& states, const bool hasFinal)
+    static Result ProcessAlternation(const AST::AlternationNode* node, std::vector<State>& states, const bool hasFinal)
     {
         //        () N(a) ()
         //      ε/          \ε

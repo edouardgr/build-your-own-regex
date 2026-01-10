@@ -57,8 +57,8 @@ namespace AST
 
     class ConcatenationNode : public Node {
     public:
-        explicit ConcatenationNode(std::vector<std::unique_ptr<Node>> children);
-        [[nodiscard]] std::vector<Node*> GetChildren() const;;
+        explicit ConcatenationNode(std::vector<std::unique_ptr<Node>> children) : Node(Concatenation), Children(std::move(children)) { }
+        [[nodiscard]] const std::vector<std::unique_ptr<Node>>& GetChildren() const { return Children; }
         std::string Print() override;
 
     private:
