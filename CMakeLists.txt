@@ -28,7 +28,9 @@ add_library(RegexEngineLib
         NFA/NFABuilder.cpp
         NFA/NFABuilder.h
         NFA/LiteralMatcher.cpp
-        NFA/LiteralMatcher.h)
+        NFA/LiteralMatcher.h
+        Regex.cpp
+        Regex.h)
 
 # Main application executable
 add_executable(RegexEngine main.cpp)
