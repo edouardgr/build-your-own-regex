@@ -67,12 +67,12 @@ namespace AST
 
     class LiteralNode : public Node {
     public:
-        explicit LiteralNode(const char character) : Node(Literal), _literal { character } {}
-        [[nodiscard]] char GetLiteral() const { return _literal; }
+        explicit LiteralNode(std::string literal) : Node(Literal), _literal {std::move( literal )} {}
+        [[nodiscard]] std::string GetLiteral() const { return _literal; }
         std::string Print() override;
 
     private:
-        char _literal;
+        std::string _literal;
     };
 
     class WildcardNode : public Node

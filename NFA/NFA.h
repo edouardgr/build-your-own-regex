@@ -1,6 +1,4 @@
 #pragma once
-#include <iostream>
-
 #include "State.h"
 #include "../AST/AST.h"
 

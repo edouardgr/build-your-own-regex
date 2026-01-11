@@ -14,7 +14,7 @@ int main()
     // [] - character range
 
     // Tokenize input
-    const std::string inputRegex = "(ab*)*|c*[xyz]*";
+    const std::string inputRegex = "(ab*)*|c*[xyz]";
     const std::vector<std::string> tokens = Tokenizer::Tokenize(inputRegex);
 
     // Tokens -> AST

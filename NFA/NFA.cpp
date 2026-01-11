@@ -1,5 +1,4 @@
 #include "NFA.h"
-#include "Constants.h"
 #include "NFABuilder.h"
 #include <stack>
 
@@ -29,33 +28,20 @@ namespace FiniteAutomata
             currentStateIndex = stateIndex;
             stack.pop();
 
-            auto transitionTable = States[currentStateIndex].GetTransitionTable();
-            for (const auto& [character, nextStateIndexes] : transitionTable)
+            const auto& transitions = States[currentStateIndex].GetTransitions();
+            for (const auto& [matcher, nextStateIndex] : transitions)
             {
-                if (character == ::NFA::EpsilonCharacter)
+                if (stringIndex < input.length() && matcher->IsMatching(input[stringIndex]))
                 {
-                    for (const size_t nextStateIndex : nextStateIndexes)
+                    if (States[nextStateIndex].IsFinalState())
                     {
-                        if (States[nextStateIndex].IsFinalState())
-                        {
-                            return true;
-                        }
-
-                        stack.push({ nextStateIndex, stringIndex });
+                        return true;
                     }
-                }
 
-                if (stringIndex < input.length() && character == input[stringIndex])
-                {
-                    for (const size_t nextStateIndex : nextStateIndexes)
-                    {
-                        if (States[nextStateIndex].IsFinalState())
-                        {
-                            return true;
-                        }
+                    const bool isEpsilon = matcher->GetType() == LiteralMatcher::Epsilon;
+                    const size_t offset = isEpsilon ? 0 : 1;
 
-                        stack.push({ nextStateIndex, stringIndex + 1 });
-                    }
+                    stack.push({ nextStateIndex, stringIndex + offset });
                 }
             }
         }

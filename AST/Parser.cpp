@@ -45,7 +45,7 @@ namespace AST
         }
 
         Consume(); // eat literal
-        return std::make_unique<LiteralNode>(token[0]);
+        return std::make_unique<LiteralNode>(token);
     }
 
     std::unique_ptr<Node> Parser::ParseKleene()

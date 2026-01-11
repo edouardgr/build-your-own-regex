@@ -1,11 +1,19 @@
 #include "State.h"
-#include "Constants.h"
 #include "../AST/AST.h"
 #include "NFABuilder.h"
 
 namespace NFABuilder
 {
-    static Result ProcessLiteral(const AST::LiteralNode* node, std::vector<NFA::State>& states, const bool hasFinal)
+    static std::unique_ptr<LiteralMatcher::LiteralMatcher> CreateLiteralMatcher(const std::string& literal)
+    {
+        if (literal.length() > 1)
+        {
+            return std::make_unique<LiteralMatcher::MultipleLiteralMatcher>(literal);
+        }
+
+        return std::make_unique<LiteralMatcher::SingleLiteralMatcher>(literal[0]);
+    }
+
     static std::pair<size_t, size_t> ProcessLiteral(const AST::LiteralNode* node, std::vector<NFA::State>& states, const bool hasFinal)
     {
         //        a
@@ -19,7 +27,7 @@ namespace NFABuilder
         const size_t endIndex = states.size();
         states.emplace_back(hasFinal);
 
-        states[startIndex].AddTransition(node->GetLiteral(), endIndex);
+        states[startIndex].AddTransition(CreateLiteralMatcher(node->GetLiteral()), endIndex);
 
         return { startIndex, endIndex };
     }
@@ -40,13 +48,13 @@ namespace NFABuilder
         const size_t endIndex = states.size();
         states.emplace_back(hasFinal);
 
-        states[startIndex].AddTransition(NFA::EpsilonCharacter, endIndex);
+        states[startIndex].AddTransition(std::make_unique<LiteralMatcher::EpsilonMatcher>(), endIndex);
 
         auto [repeatStartIndex, repeatEndIndex] = DetermineProcess(node->GetLeftNode(), states, false);
 
-        states[startIndex].AddTransition(NFA::EpsilonCharacter, repeatStartIndex);
-        states[repeatEndIndex].AddTransition(NFA::EpsilonCharacter, repeatStartIndex);
-        states[repeatEndIndex].AddTransition(NFA::EpsilonCharacter, endIndex);
+        states[startIndex].AddTransition(std::make_unique<LiteralMatcher::EpsilonMatcher>(), repeatStartIndex);
+        states[repeatEndIndex].AddTransition(std::make_unique<LiteralMatcher::EpsilonMatcher>(), repeatStartIndex);
+        states[repeatEndIndex].AddTransition(std::make_unique<LiteralMatcher::EpsilonMatcher>(), endIndex);
 
         return { startIndex, endIndex };
     }
@@ -68,12 +76,11 @@ namespace NFABuilder
         {
             auto [childStartIndex, childEndIndex] = DetermineProcess(child.get(), states, false);
 
-            states[startIndex].AddTransition(NFA::EpsilonCharacter, childStartIndex);
+            states[startIndex].AddTransition(std::make_unique<LiteralMatcher::EpsilonMatcher>(), childStartIndex);
             startIndex = childEndIndex;
         }
 
-        states[startIndex].AddTransition(NFA::EpsilonCharacter, endIndex);
-        return Result { originalStartIndex, endIndex };
+        states[startIndex].AddTransition(std::make_unique<LiteralMatcher::EpsilonMatcher>(), endIndex);
         return { originalStartIndex, endIndex };
     }
 
@@ -96,11 +103,11 @@ namespace NFABuilder
         auto [leftStartIndex, leftEndIndex] = DetermineProcess(node->GetLeftNode(), states, false); // 2, 3
         auto [rightStartIndex, rightEndIndex] = DetermineProcess(node->GetRightNode(), states, false); // 4, 5
 
-        states[startIndex].AddTransition(NFA::EpsilonCharacter, leftStartIndex);
-        states[startIndex].AddTransition(NFA::EpsilonCharacter, rightStartIndex);
+        states[startIndex].AddTransition(std::make_unique<LiteralMatcher::EpsilonMatcher>(), leftStartIndex);
+        states[startIndex].AddTransition(std::make_unique<LiteralMatcher::EpsilonMatcher>(), rightStartIndex);
 
-        states[leftEndIndex].AddTransition(NFA::EpsilonCharacter, endIndex);
-        states[rightEndIndex].AddTransition(NFA::EpsilonCharacter, endIndex);
+        states[leftEndIndex].AddTransition(std::make_unique<LiteralMatcher::EpsilonMatcher>(), endIndex);
+        states[rightEndIndex].AddTransition(std::make_unique<LiteralMatcher::EpsilonMatcher>(), endIndex);
 
         return { startIndex, endIndex };
     }
@@ -108,16 +115,19 @@ namespace NFABuilder
     static std::pair<size_t, size_t> ProcessZeroOrOne(const AST::ZeroOrOneNode* node, std::vector<NFA::State>& states, const bool hasFinal)
     {
         // TODO:
+        return { 0, 1 };
     }
 
     static std::pair<size_t, size_t> ProcessOneOrMore(const AST::OneOrMoreNode* node, std::vector<NFA::State>& states, const bool hasFinal)
     {
         // TODO:
+        return { 0, 1};
     }
 
     static std::pair<size_t, size_t> ProcessWildcard(const AST::WildcardNode* node, std::vector<NFA::State>& states, const bool hasFinal)
     {
         // TODO:
+        return { 0, 1};
     }
 
     std::pair<size_t, size_t> DetermineProcess(AST::Node* node, std::vector<NFA::State>& states, const bool hasFinal)

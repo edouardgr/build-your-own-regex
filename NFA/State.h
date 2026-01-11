@@ -1,20 +1,18 @@
 #pragma once
-#include <map>
-#include <vector>
+#include "LiteralMatcher.h"
 
 namespace NFA
 {
     class State
     {
     public:
-        explicit State(const bool isFinal) : IsFinal(isFinal) { TransitionTable = std::map<char, std::vector<size_t>> { }; }
+        explicit State(const bool isFinal) : IsFinal(isFinal) { }
         [[nodiscard]] bool IsFinalState() const { return IsFinal; }
-        void AddTransition(char character, size_t nextStateIndex);
-        [[nodiscard]] const std::map<char, std::vector<size_t>>& GetTransitionTable() const { return TransitionTable; };
+        void AddTransition(std::unique_ptr<LiteralMatcher::LiteralMatcher> matcher, size_t nextStateIndex);
+        [[nodiscard]] const std::vector<std::pair<std::unique_ptr<LiteralMatcher::LiteralMatcher>, size_t>>& GetTransitions() const { return Transitions; }
 
     private:
         bool IsFinal = false;
-        // TODO: Replace `char` with class + character range
-        std::map<char, std::vector<size_t>> TransitionTable;
+        std::vector<std::pair<std::unique_ptr<LiteralMatcher::LiteralMatcher>, size_t>> Transitions;
     };
 }
