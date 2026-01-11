@@ -22,18 +22,20 @@ namespace FiniteAutomata
         stack.push({ InitialStateIndex, 0 });
 
         size_t currentStateIndex = InitialStateIndex;
+        size_t currentStringIndex = 0;
         while (!stack.empty())
         {
             auto [stateIndex, stringIndex] = stack.top();
             currentStateIndex = stateIndex;
+            currentStringIndex = stringIndex;
             stack.pop();
 
             const auto& transitions = States[currentStateIndex].GetTransitions();
             for (const auto& [matcher, nextStateIndex] : transitions)
             {
-                if (stringIndex < input.length() && matcher->IsMatching(input[stringIndex]))
+                if (matcher->GetType() == LiteralMatcher::Epsilon || (stringIndex < input.length() && matcher->IsMatching(input[stringIndex]))) // stringIndex (2) < input.length() (2)
                 {
-                    if (States[nextStateIndex].IsFinalState())
+                    if (States[nextStateIndex].IsFinalState() && stringIndex == input.length())
                     {
                         return true;
                     }
@@ -46,7 +48,7 @@ namespace FiniteAutomata
             }
         }
 
-        return States[currentStateIndex].IsFinalState();
+        return States[currentStateIndex].IsFinalState() && currentStringIndex == input.length();
     }
 }
 
