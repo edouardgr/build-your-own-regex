@@ -9,6 +9,7 @@ namespace LiteralMatcher
     {
         Single,
         Multiple,
+        Wildcard,
         Epsilon,
     };
 
@@ -65,6 +66,13 @@ namespace LiteralMatcher
         bool IsMatching(char character) override;
     private:
         std::vector<std::unique_ptr<Literal>> Literals;
+    };
+
+    class WildcardMatcher : public LiteralMatcher
+    {
+    public:
+        explicit WildcardMatcher() : LiteralMatcher(Wildcard) { }
+        bool IsMatching(char character) override { return true; }
     };
 
     class EpsilonMatcher : public LiteralMatcher

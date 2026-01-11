@@ -122,14 +122,13 @@ namespace RegexTests
             REQUIRE(regex.Validate("a") == false);
         }
 
-        // Infinite loop :(
-        // SECTION("Wildcard with quantifier")
-        // {
-        //     const Regex regex(".*");
-        //     REQUIRE(regex.Validate("") == true);
-        //     REQUIRE(regex.Validate("a") == true);
-        //     REQUIRE(regex.Validate("abc") == true);
-        //     REQUIRE(regex.Validate("hello world") == true);
-        // }
+        SECTION("Wildcard with quantifier")
+        {
+            const Regex regex(".*");
+            REQUIRE(regex.Validate("") == true);
+            REQUIRE(regex.Validate("a") == true);
+            REQUIRE(regex.Validate("abc") == true);
+            REQUIRE(regex.Validate("hello world") == true);
+        }
     }
 }

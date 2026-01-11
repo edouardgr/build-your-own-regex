@@ -115,19 +115,31 @@ namespace NFABuilder
     static std::pair<size_t, size_t> ProcessZeroOrOne(const AST::ZeroOrOneNode* node, std::vector<NFA::State>& states, const bool hasFinal)
     {
         // TODO:
-        return { 0, 1 };
+        throw std::logic_error("Not yet implemented");
     }
 
     static std::pair<size_t, size_t> ProcessOneOrMore(const AST::OneOrMoreNode* node, std::vector<NFA::State>& states, const bool hasFinal)
     {
         // TODO:
-        return { 0, 1};
-    }
+        throw std::logic_error("Not yet implemented");
+     }
 
-    static std::pair<size_t, size_t> ProcessWildcard(const AST::WildcardNode* node, std::vector<NFA::State>& states, const bool hasFinal)
+    static std::pair<size_t, size_t> ProcessWildcard(const AST::WildcardNode* _, std::vector<NFA::State>& states, const bool hasFinal)
     {
-        // TODO:
-        return { 0, 1};
+        //        .
+        // -->(q)-->(f)-->
+
+        // Start index
+        const size_t startIndex = states.size();
+        states.emplace_back(false);
+
+        // End index
+        const size_t endIndex = states.size();
+        states.emplace_back(hasFinal);
+
+        states[startIndex].AddTransition(std::make_unique<LiteralMatcher::WildcardMatcher>(), endIndex);
+
+        return { startIndex, endIndex };
     }
 
     std::pair<size_t, size_t> DetermineProcess(AST::Node* node, std::vector<NFA::State>& states, const bool hasFinal)
