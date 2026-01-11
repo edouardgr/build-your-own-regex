@@ -1,6 +1,6 @@
-#include "Tokenize.h"
+#include "Lexer.h"
 
-namespace Tokenizer
+namespace Lexer
 {
     char constexpr LeftBracketCharacter = '[';
     char constexpr RightBracketCharacter = ']';
@@ -14,7 +14,7 @@ namespace Tokenizer
         throw std::invalid_argument("Cannot find closing bracket");
     }
 
-    std::vector<std::string> Tokenize(const std::string& input)
+    std::vector<std::string> Scan(const std::string& input)
     {
         std::vector<std::string> tokens{ };
         size_t index = 0;

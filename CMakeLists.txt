@@ -14,8 +14,8 @@ FetchContent_MakeAvailable(Catch2)
 set(CMAKE_CXX_STANDARD 20)
 
 add_library(RegexEngineLib
-        Tokenizer/Tokenize.cpp
-        Tokenizer/Tokenize.h
+        Lexer/Lexer.cpp
+        Lexer/Lexer.h
         AST/AST.cpp
         AST/AST.h
         NFA/NFA.cpp
@@ -38,6 +38,6 @@ target_link_libraries(RegexEngine PRIVATE RegexEngineLib)
 
 # Test executable
 add_executable(RegexEngineTests
-        Tokenizer/TokenizerTests.cpp
+        Lexer/LexerTests.cpp
         RegexTests.cpp)
 target_link_libraries(RegexEngineTests PRIVATE RegexEngineLib Catch2::Catch2WithMain)
