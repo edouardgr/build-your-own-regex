@@ -23,7 +23,7 @@ namespace NFABuilder
         return Result { startIndex, endIndex };
     }
 
-    static Result ProcessStar(const AST::KleeneNode* node, std::vector<NFA::State>& states, const bool hasFinal)
+    static Result ProcessZeroOrMore(const AST::KleeneNode* node, std::vector<NFA::State>& states, const bool hasFinal)
     {
         //             -<<-
         //        ε   / ε  \   ε
@@ -103,6 +103,21 @@ namespace NFABuilder
         return Result { startIndex, endIndex };
     }
 
+    static Result ProcessZeroOrOne(const AST::ZeroOrOneNode* node, std::vector<NFA::State>& states, const bool hasFinal)
+    {
+        // TODO:
+    }
+
+    static Result ProcessOneOrMore(const AST::OneOrMoreNode* node, std::vector<NFA::State>& states, const bool hasFinal)
+    {
+        // TODO:
+    }
+
+    static Result ProcessWildcard(const AST::WildcardNode* node, std::vector<NFA::State>& states, const bool hasFinal)
+    {
+        // TODO:
+    }
+
     Result DetermineProcess(AST::Node* node, std::vector<NFA::State>& states, const bool hasFinal)
     {
         switch (node->GetType())
@@ -110,11 +125,17 @@ namespace NFABuilder
         case AST::Literal:
             return ProcessLiteral(dynamic_cast<AST::LiteralNode*>(node), states, hasFinal);
         case AST::ZeroOrMore:
-            return ProcessStar(dynamic_cast<AST::KleeneNode*>(node), states, hasFinal);
+            return ProcessZeroOrMore(dynamic_cast<AST::KleeneNode*>(node), states, hasFinal);
         case AST::Concatenation:
             return ProcessConcatenation(dynamic_cast<AST::ConcatenationNode*>(node), states, hasFinal);
         case AST::Alternation:
             return ProcessAlternation(dynamic_cast<AST::AlternationNode*>(node), states, hasFinal);
+        case AST::ZeroOrOne:
+            return ProcessZeroOrOne(dynamic_cast<AST::ZeroOrOneNode*>(node), states, hasFinal);
+        case AST::OneOrMore:
+            return ProcessOneOrMore(dynamic_cast<AST::OneOrMoreNode*>(node), states, hasFinal);
+        case AST::Wildcard:
+            return ProcessWildcard(dynamic_cast<AST::WildcardNode*>(node), states, hasFinal);
         default:
             throw std::invalid_argument("Could not determine type");
         }
