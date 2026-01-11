@@ -4,16 +4,17 @@ namespace LiteralMatcher
 {
     MultipleLiteralMatcher::MultipleLiteralMatcher(const std::string& literal) : LiteralMatcher(Multiple)
     {
-        for (size_t i = 0; i < literal.length(); ++i)
+        const std::string trimmed = literal.substr(1, literal.length() - 2); // eat brackets
+        for (size_t i = 0; i < trimmed.length(); ++i)
         {
-            if (i + 1 < literal.length() && literal.at(i + 1) == '-')
+            if (i + 1 < trimmed.length() && trimmed.at(i + 1) == '-')
             {
-                Literals.push_back(std::make_unique<RangeLiteral>(literal[i], literal[i + 2]));
+                Literals.push_back(std::make_unique<RangeLiteral>(trimmed[i], trimmed[i + 2]));
                 i += 2;
                 continue;
             }
 
-            Literals.push_back(std::make_unique<SingleLiteral>(literal[i]));
+            Literals.push_back(std::make_unique<SingleLiteral>(trimmed[i]));
         }
     }
 
