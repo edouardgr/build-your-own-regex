@@ -6,6 +6,7 @@
 namespace NFABuilder
 {
     static Result ProcessLiteral(const AST::LiteralNode* node, std::vector<NFA::State>& states, const bool hasFinal)
+    static std::pair<size_t, size_t> ProcessLiteral(const AST::LiteralNode* node, std::vector<NFA::State>& states, const bool hasFinal)
     {
         //        a
         // -->(q)-->(f)-->
@@ -20,10 +21,10 @@ namespace NFABuilder
 
         states[startIndex].AddTransition(node->GetLiteral(), endIndex);
 
-        return Result { startIndex, endIndex };
+        return { startIndex, endIndex };
     }
 
-    static Result ProcessZeroOrMore(const AST::KleeneNode* node, std::vector<NFA::State>& states, const bool hasFinal)
+    static std::pair<size_t, size_t> ProcessZeroOrMore(const AST::KleeneNode* node, std::vector<NFA::State>& states, const bool hasFinal)
     {
         //             -<<-
         //        ε   / ε  \   ε
@@ -47,10 +48,10 @@ namespace NFABuilder
         states[repeatEndIndex].AddTransition(NFA::EpsilonCharacter, repeatStartIndex);
         states[repeatEndIndex].AddTransition(NFA::EpsilonCharacter, endIndex);
 
-        return Result { startIndex, endIndex };
+        return { startIndex, endIndex };
     }
 
-    static Result ProcessConcatenation(const AST::ConcatenationNode* node, std::vector<NFA::State>& states, const bool hasFinal)
+    static std::pair<size_t, size_t> ProcessConcatenation(const AST::ConcatenationNode* node, std::vector<NFA::State>& states, const bool hasFinal)
     {
         // -->(q) N(a) () N(b) (f)-->
 
@@ -73,9 +74,10 @@ namespace NFABuilder
 
         states[startIndex].AddTransition(NFA::EpsilonCharacter, endIndex);
         return Result { originalStartIndex, endIndex };
+        return { originalStartIndex, endIndex };
     }
 
-    static Result ProcessAlternation(const AST::AlternationNode* node, std::vector<NFA::State>& states, const bool hasFinal)
+    static std::pair<size_t, size_t> ProcessAlternation(const AST::AlternationNode* node, std::vector<NFA::State>& states, const bool hasFinal)
     {
         //        () N(a) ()
         //      ε/          \ε
@@ -100,25 +102,25 @@ namespace NFABuilder
         states[leftEndIndex].AddTransition(NFA::EpsilonCharacter, endIndex);
         states[rightEndIndex].AddTransition(NFA::EpsilonCharacter, endIndex);
 
-        return Result { startIndex, endIndex };
+        return { startIndex, endIndex };
     }
 
-    static Result ProcessZeroOrOne(const AST::ZeroOrOneNode* node, std::vector<NFA::State>& states, const bool hasFinal)
+    static std::pair<size_t, size_t> ProcessZeroOrOne(const AST::ZeroOrOneNode* node, std::vector<NFA::State>& states, const bool hasFinal)
     {
         // TODO:
     }
 
-    static Result ProcessOneOrMore(const AST::OneOrMoreNode* node, std::vector<NFA::State>& states, const bool hasFinal)
+    static std::pair<size_t, size_t> ProcessOneOrMore(const AST::OneOrMoreNode* node, std::vector<NFA::State>& states, const bool hasFinal)
     {
         // TODO:
     }
 
-    static Result ProcessWildcard(const AST::WildcardNode* node, std::vector<NFA::State>& states, const bool hasFinal)
+    static std::pair<size_t, size_t> ProcessWildcard(const AST::WildcardNode* node, std::vector<NFA::State>& states, const bool hasFinal)
     {
         // TODO:
     }
 
-    Result DetermineProcess(AST::Node* node, std::vector<NFA::State>& states, const bool hasFinal)
+    std::pair<size_t, size_t> DetermineProcess(AST::Node* node, std::vector<NFA::State>& states, const bool hasFinal)
     {
         switch (node->GetType())
         {
