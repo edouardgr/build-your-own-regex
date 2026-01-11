@@ -98,6 +98,16 @@ namespace RegexTests
             REQUIRE(regex.Validate("1") == false);
             REQUIRE(regex.Validate("") == false);
         }
+
+        SECTION("Range notation [0-9]")
+        {
+            const Regex regex("[0-9]");
+            REQUIRE(regex.Validate("0") == true);
+            REQUIRE(regex.Validate("4") == true);
+            REQUIRE(regex.Validate("9") == true);
+            REQUIRE(regex.Validate("A") == false);
+            REQUIRE(regex.Validate("") == false);
+        }
     }
 
     TEST_CASE("Combined patterns")
