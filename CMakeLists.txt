@@ -37,5 +37,7 @@ add_executable(RegexEngine main.cpp)
 target_link_libraries(RegexEngine PRIVATE RegexEngineLib)
 
 # Test executable
-add_executable(RegexEngineTests Tokenizer/TokenizerTests.cpp)
+add_executable(RegexEngineTests
+        Tokenizer/TokenizerTests.cpp
+        RegexTests.cpp)
 target_link_libraries(RegexEngineTests PRIVATE RegexEngineLib Catch2::Catch2WithMain)

@@ -1,15 +1,13 @@
-#include "AST/AST.h"
-#include "AST/Parser.h"
-#include "Tokenizer/Tokenize.h"
-#include "NFA/NFA.h"
 #include <iostream>
-#include <memory>
-#include <vector>
 
 #include "Regex.h"
 
 int main()
 {
+    // a - Literal
+    // a|b - Or
+    // ab - Concatenation
+    // a* - Zero or many
     // a? - Zero or one
     // a+ - One or more
     // . - wildcard
