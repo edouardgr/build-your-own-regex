@@ -11,6 +11,9 @@ https://en.wikipedia.org/wiki/Lexical_analysis
 ## Abstract syntax tree
 https://en.wikipedia.org/wiki/Abstract_syntax_tree
 
+### Recursive descent parser
+https://en.wikipedia.org/wiki/Recursive_descent_parser
+
 ## Thompson construction
 https://en.wikipedia.org/wiki/Thompson%27s_construction
 
@@ -31,4 +34,8 @@ https://en.wikipedia.org/wiki/Backtracking
 | Character Range | `[a-z]` | Matches any character within the specified range          | `[0-9]` matches any digit, `[a-z]` matches any lowercase letter |
 
 ## Challenges
-- Memory management with `unique_ptr` and `const`
+- Memory management with `unique_ptr` 
+  - Link to cpp class
+- usages of `const` on return values
+  - Link to cpp class
+- Recursive descent parser
