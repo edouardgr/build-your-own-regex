@@ -15,7 +15,10 @@ https://en.wikipedia.org/wiki/Abstract_syntax_tree
 https://en.wikipedia.org/wiki/Recursive_descent_parser
 
 ## Thompson construction
-https://en.wikipedia.org/wiki/Thompson%27s_construction
+[**Thompson's construction**](https://en.wikipedia.org/wiki/Thompson%27s_construction) is a method of transforming a 
+regular expression into an equivalent nondeterministic finite automaton (NFA). We recursively navigate down the AST tree
+and tackle each node. Each node is identified and converted into a subexpression. By working our way up the tree and 
+merging each subexpression, we end up with our complete NFA.
 
 ## Backtracking
 https://en.wikipedia.org/wiki/Regular_expression#Implementations_and_running_times
@@ -35,7 +38,11 @@ https://en.wikipedia.org/wiki/Backtracking
 
 ## Challenges
 - Memory management with `unique_ptr` 
-  - Link to cpp class
+  - Revisit: https://www.studyplan.dev/intro-to-programming/memory-ownership
 - usages of `const` on return values
-  - Link to cpp class
+  - Revisit: https://www.studyplan.dev/intro-to-programming/const
 - Recursive descent parser
+  - Exercise: Create a mathematical expression parser
+
+## TODOS
+- [ ] Benchmark against standard library regex
