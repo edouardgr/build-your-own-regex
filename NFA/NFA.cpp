@@ -10,54 +10,36 @@ namespace FiniteAutomata
         InitialStateIndex = startStateIndex;
     }
 
-    struct StackData
-    {
-        size_t StateIndex;
-        size_t StringIndex;
-    };
-
     bool NFA::Validate(const std::string& input) const
     {
-        std::stack<StackData> stack;
-        stack.push({ InitialStateIndex, 0 });
+        std::stack<std::pair<size_t, size_t>> stack;
+        stack.emplace(std::pair { InitialStateIndex, 0 });
 
-        size_t currentStateIndex = InitialStateIndex;
-        size_t currentStringIndex = 0;
         while (!stack.empty())
         {
             auto [stateIndex, stringIndex] = stack.top();
-            currentStateIndex = stateIndex;
-            currentStringIndex = stringIndex;
             stack.pop();
 
-            const auto& transitions = States[currentStateIndex].GetTransitions();
-            for (const auto& [matcher, nextStateIndex] : transitions)
+            if (States[stateIndex].IsFinalState() && stringIndex == input.length())
             {
-                if (matcher->GetType() == LiteralMatcher::Epsilon || (stringIndex < input.length() && matcher->IsMatching(input[stringIndex]))) // stringIndex (2) < input.length() (2)
+                return true;
+            }
+
+            for (const auto& [matcher, nextStateIndex] : States[stateIndex].GetTransitions())
+            {
+                if (matcher->GetType() == LiteralMatcher::Epsilon)
                 {
-                    if (States[nextStateIndex].IsFinalState() && stringIndex == input.length())
-                    {
-                        return true;
-                    }
-
-                    const bool isEpsilon = matcher->GetType() == LiteralMatcher::Epsilon;
-                    const size_t offset = isEpsilon ? 0 : 1;
-
-                    stack.push({ nextStateIndex, stringIndex + offset });
+                    stack.emplace( nextStateIndex, stringIndex );
+                }
+                else if (stringIndex < input.length() && matcher->IsMatching(input[stringIndex]))
+                {
+                    stack.emplace( nextStateIndex, stringIndex + 1 );
                 }
             }
         }
 
-        return States[currentStateIndex].IsFinalState() && currentStringIndex == input.length();
+        return false;
     }
-}
 
-//          Alternation(|)
-//	 	   /              \
-// 	   Star(*)          Star(*)
-//		  |                |
-//	   Concat           Literal('c')
-//	   /    \
-// Literal   Star(*)
-//  ('a')      |
-// 		   Literal('b')
+
+}

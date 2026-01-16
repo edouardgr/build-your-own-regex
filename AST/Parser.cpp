@@ -7,7 +7,7 @@ namespace AST
     {
         if (pos >= Tokens.size())
         {
-            throw std::out_of_range("Consuming token out of range");
+            throw std::out_of_range("Peeking token out of range");
         }
         return Tokens[pos];
     }
@@ -16,7 +16,7 @@ namespace AST
     {
         if (pos >= Tokens.size())
         {
-            throw std::out_of_range("Peeking token out of range");
+            throw std::out_of_range("Consuming token out of range");
         }
         return Tokens[pos++];
     }
